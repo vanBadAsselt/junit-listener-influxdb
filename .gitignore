@@ -1,0 +1,44 @@
+# IDEA
+
+.idea
+*.iml
+
+# Eclipse
+
+.classpath
+.project
+.settings
+.metadata
+.recommenders
+
+# Maven
+
+target
+
+# Mac OS X
+
+.DS_Store
+
+# Windows
+
+thumbs.db
+
+# Logs
+*.log
+*.log.*
+
+# Local properties
+*_override.properties
+
+### Checkstyle ###
+checkstyle-cachefile
+
+# Maven files
+pom.xml.versionsBackup
+overlays
+
+# Pitest
+.pitHistory
+
+# Atomikos
+*.epoch
