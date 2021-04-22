@@ -7,8 +7,8 @@ This is the [Junit Test Execution Listener](https://junit.org/junit5/docs/5.0.3/
 ```
     <dependency>
         <groupId>com.github.vanbadasselt</groupId>
-        <artifactId>junit-test-listener</artifactId>
-        <version>${junit-test-listener.version}</version>
+        <artifactId>junit-listener-influxdb</artifactId>
+        <version>${unit-listener-influxdb.version}</version>
         <scope>test</scope>
     </dependency>
 ```

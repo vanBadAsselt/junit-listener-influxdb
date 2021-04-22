@@ -14,6 +14,7 @@
         <maven.compiler.target>11</maven.compiler.target>
         <junit-platform-launcher.version>1.7.0</junit-platform-launcher.version>
         <influxdbClient.version>2.20</influxdbClient.version>
+        <spotbugs.version>3.1.12</spotbugs.version>
     </properties>
 
     <dependencies>
@@ -26,6 +27,11 @@
             <groupId>org.influxdb</groupId>
             <artifactId>influxdb-java</artifactId>
             <version>${influxdbClient.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>${spotbugs.version}</version>
         </dependency>
     </dependencies>
 
