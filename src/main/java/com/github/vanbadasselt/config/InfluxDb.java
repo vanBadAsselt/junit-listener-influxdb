@@ -25,17 +25,16 @@ public final class InfluxDb {
 
 
 
+    /**
+     * Initializes connection with an influx database.
+     */
     public InfluxDb() {
-        influxDBConnection = InfluxDBFactory.connect(INFLUX_URL, INFLUX_USER, INFLUX_PASSWORD);
-        final Pong response = this.influxDBConnection.ping();
-        if (response.getVersion().equalsIgnoreCase("unknown")) {
-            log.warning("Error pinging server.");
-            return;
-        }
-        influxDBConnection.setLogLevel(InfluxDB.LogLevel.BASIC);
-        influxDBConnection.setDatabase(INFLUX_DB_NAME);
-        influxDBConnection.createRetentionPolicy(
-                "defaultPolicy", INFLUX_DB_NAME, "60d", 1, true);
+        final String influxHost = getEnvironmentVariable(ENV_INFLUX_HOST, "localhost");
+        final String influxPort = getEnvironmentVariable(ENV_INFLUX_PORT, "8086");
+        influxUrl = "http://" + influxHost + ":" + influxPort;
+        influxUser = getEnvironmentVariable(ENV_INFLUX_USER, "root");
+        influxPassword = getEnvironmentVariable(ENV_INFLUX_PASSWORD, "root");
+        influxDatabaseName = getEnvironmentVariable(ENV_INFLUX_DB_NAME, "testresults");
     }
 
     /**
@@ -80,7 +79,7 @@ public final class InfluxDb {
      */
     public BatchPoints getBatchPoints() {
         return BatchPoints
-                .database(INFLUX_DB_NAME)
+                .database(influxDatabaseName)
                 .retentionPolicy("defaultPolicy")
                 .build();
     }
