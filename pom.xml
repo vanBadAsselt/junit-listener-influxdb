@@ -6,8 +6,34 @@
 
     <groupId>com.github.vanbadasselt</groupId>
     <artifactId>junit-listener-influxdb</artifactId>
-    <version>0-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
     <name>JUnit Listener InfluxDB</name>
+    <description>Extracts JUnit test results to store them into an Influx database</description>
+    <url>https://github.com/vanBadAsselt/junit-listener-influxdb</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Anais van Asselt</name>
+            <email>anais@detesters.nl</email>
+            <organization>deTesters</organization>
+            <organizationUrl>https://detesters.nl/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/vanBadAsselt/junit-listener-influxdb.git</connection>
+        <developerConnection>scm:git:ssh://github.com:vanBadAsselt/junit-listener-influxdb.git</developerConnection>
+        <url>http://github.com/vanBadAsselt/junit-listener-influxdb/tree/master</url>
+    </scm>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
