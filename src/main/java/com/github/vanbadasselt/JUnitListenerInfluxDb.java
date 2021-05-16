@@ -1,14 +1,10 @@
 package com.github.vanbadasselt;
 
 import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.engine.TestTag;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
 import org.junit.platform.launcher.TestPlan;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.util.Set;
 import java.util.logging.Logger;
 
 @SuppressWarnings("PMD.JUnit4TestShouldUseTestAnnotation")

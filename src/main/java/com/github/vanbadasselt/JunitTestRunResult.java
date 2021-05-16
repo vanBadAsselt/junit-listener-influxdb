@@ -7,6 +7,7 @@ import org.influxdb.annotation.TimeColumn;
 import java.time.Instant;
 
 @SuppressFBWarnings("URF_UNREAD_FIELD")
+@SuppressWarnings("PMD.UnusedPrivateField")
 @Measurement(name = "junitRun")
 public class JunitTestRunResult {
 

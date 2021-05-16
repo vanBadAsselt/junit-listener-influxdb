@@ -4,26 +4,71 @@ import org.influxdb.BatchOptions;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.BatchPoints;
-import org.influxdb.dto.Point;
 import org.influxdb.dto.Pong;
 
 import java.util.logging.Logger;
 
+/**
+ * Addresses the right InfluxDb instance via environment variables in order to interact with this instance.
+ *
+ * @author vanbadasselt
+ */
 public final class InfluxDb {
 
+    /**
+     * Sets the right InfluxDB host via the environment variable 'TEST_RESULTS_INFLUX_HOST'.
+     */
     private static final String ENV_INFLUX_HOST = "TEST_RESULTS_INFLUX_HOST";
+
+    /**
+     * Sets the right InfluxDB port via the environment variable 'TEST_RESULTS_INFLUX_PORT'.
+     */
     private static final String ENV_INFLUX_PORT = "TEST_RESULTS_INFLUX_PORT";
+
+    /**
+     * Sets the right InfluxDB user via the environment variable 'TEST_RESULTS_INFLUX_USER'.
+     */
     private static final String ENV_INFLUX_USER = "TEST_RESULTS_INFLUX_USER";
+
+    /**
+     * Sets the right InfluxDB password via the environment variable 'TEST_RESULTS_INFLUX_PASSWORD'.
+     */
     private static final String ENV_INFLUX_PASSWORD = "TEST_RESULTS_INFLUX_PASSWORD";
+
+    /**
+     * Sets the right InfluxDB database name via the environment variable 'TEST_RESULTS_INFLUX_DB'.
+     */
     private static final String ENV_INFLUX_DB_NAME = "TEST_RESULTS_INFLUX_DB";
+
+    /**
+     * Logs in case of warning.
+     */
     private final Logger log = Logger.getLogger(InfluxDb.class.getName());
+
+    /**
+     * Represents the connection with the addressed InfluxDB instance.
+     */
     private InfluxDB influxDBConnection;
-    private String influxUrl;
-    private String influxUser;
-    private String influxPassword;
-    private String influxDatabaseName;
 
+    /**
+     * Aggregation of Influx host and port.
+     */
+    private final String influxUrl;
 
+    /**
+     * Represents the Influx user.
+     */
+    private final String influxUser;
+
+    /**
+     * Represents the Influx password.
+     */
+    private final String influxPassword;
+
+    /**
+     * Represents the Influx database name.
+     */
+    private final String influxDatabaseName;
 
     /**
      * Initializes connection with an influx database.
