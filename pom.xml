@@ -4,17 +4,64 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.vanbadasselt</groupId>
+    <groupId>io.github.vanbadasselt</groupId>
     <artifactId>junit-listener-influxdb</artifactId>
-    <version>0-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
     <name>JUnit Listener InfluxDB</name>
+    <description>Extracts JUnit test results to store them into an Influx database</description>
+    <url>https://github.com/vanBadAsselt/junit-listener-influxdb</url>
+
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Anais van Asselt</name>
+            <email>anais@detesters.nl</email>
+            <organization>deTesters</organization>
+            <organizationUrl>https://detesters.nl/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git://github.com/vanBadAsselt/junit-listener-influxdb.git</connection>
+        <developerConnection>scm:git:ssh://github.com:vanBadAsselt/junit-listener-influxdb.git</developerConnection>
+        <url>http://github.com/vanBadAsselt/junit-listener-influxdb/tree/master</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>13</maven.compiler.source>
+        <maven.compiler.target>13</maven.compiler.target>
         <junit-platform-launcher.version>1.7.0</junit-platform-launcher.version>
         <influxdbClient.version>2.20</influxdbClient.version>
+
+        <!-- Code analysis -->
         <spotbugs.version>3.1.12</spotbugs.version>
+        <maven-checkstyle.version>3.1.2</maven-checkstyle.version>
+        <maven-pmd.version>3.14.0</maven-pmd.version>
+
+        <!-- OSSRH -->
+        <nexus-staging-maven.version>1.6.8</nexus-staging-maven.version>
+        <maven-source.version>3.2.1</maven-source.version>
+        <maven-javadoc.version>2.9.1</maven-javadoc.version>
+        <maven-gpg.version>1.5</maven-gpg.version>
     </properties>
 
     <dependencies>
@@ -41,16 +88,69 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
+                <version>${maven-checkstyle.version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
+                <version>${maven-pmd.version}</version>
+            </plugin>
+            <!-- Setup to deploy to the OSSRH Nexus Repository Manager -->
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>${nexus-staging-maven.version}</version>
+                <extensions>true</extensions>
                 <configuration>
-                    <skip>true</skip>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
+            </plugin>
+            <!-- To get Javadoc and Source jar files generated -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc.version}</version>
+                <configuration>
+                    <source>8</source>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- To sign the components with the following config -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>${maven-gpg.version}</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
