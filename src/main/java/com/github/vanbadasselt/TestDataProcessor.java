@@ -1,4 +1,6 @@
 package com.github.vanbadasselt;
+import com.github.vanbadasselt.influxModels.TestResult;
+import com.github.vanbadasselt.influxModels.TestRunResult;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestTag;
 import org.junit.platform.launcher.TestIdentifier;
@@ -32,24 +34,27 @@ public class TestDataProcessor {
     private Instant startTimeTestRun;
 
     private String application = UNKNOWN;
-    private String featureLabel = UNKNOWN;
-    private String riskLabel = UNKNOWN;
+    private String feature = UNKNOWN;
+    private String featureName = UNKNOWN;
     private String releaseVersion = UNKNOWN;
+    private String risk = UNKNOWN;
+    private String run = UNKNOWN;
+    private String testType = UNKNOWN;
 
-    private final JunitTestRunResult junitTestRunResult;
-    private final JunitTestResult junitTestResult;
+    private TestRunResult testRunResult;
+    private TestResult testResult;
 
     TestDataProcessor() {
-        this.junitTestRunResult = new JunitTestRunResult();
-        this.junitTestResult = new JunitTestResult();
+        this.testRunResult = new TestRunResult();
+        this.testResult = new TestResult();
     }
 
-    public JunitTestRunResult getJunitTestRunResult() {
-        return junitTestRunResult;
+    public TestRunResult getTestRunResult() {
+        return testRunResult;
     }
 
-    public JunitTestResult getJunitTestResult() {
-        return junitTestResult;
+    public TestResult getTestResult() {
+        return testResult;
     }
 
     public DateTimeFormatter getFormatter() {
@@ -65,23 +70,23 @@ public class TestDataProcessor {
      */
     public void setApplication(final String testSource) {
         if (System.getenv(ENV_APPLICATION) != null) {
-            application = System.getenv(ENV_APPLICATION).toUpperCase(Locale.ROOT);
+            this.application = System.getenv(ENV_APPLICATION).toUpperCase(Locale.ROOT);
         }
 
         if (!testSource.isEmpty()) {
             String[] sourceParts = testSource.split("\\.");
 
             if (sourceParts[0].equalsIgnoreCase("com") && sourceParts[1].equalsIgnoreCase("github")) {
-                application = (sourceParts[2] + "_" + sourceParts[3]).toUpperCase(Locale.ROOT);
+                this.application = (sourceParts[2] + "_" + sourceParts[3]).toUpperCase(Locale.ROOT);
             } else {
-                application = "NO_GITHUB_APPLICATION";
+                this.application = "NO_GITHUB_APPLICATION";
             }
         } else {
-            application = "UNKNOWN_APPLICATION";
+            this.application = "UNKNOWN_APPLICATION";
         }
 
-        this.junitTestRunResult.setApplication(application);
-        this.junitTestResult.setApplication(application);
+        this.testRunResult.setApplication(this.application);
+        this.testResult.setApplication(this.application);
     }
 
     public String getApplication() {
@@ -89,22 +94,24 @@ public class TestDataProcessor {
     }
 
     public void resetTestResult() {
-        this.junitTestResult.setTestName(UNKNOWN);
-        this.junitTestResult.setDurationMs(0);
-        this.junitTestResult.setResult(UNKNOWN);
-        this.junitTestResult.setErrorMessage(UNKNOWN);
-        this.junitTestResult.setSkippedMessage(UNKNOWN);
-        this.junitTestResult.setFeatureLabel(this.featureLabel);
-        this.junitTestResult.setRiskLabel(this.riskLabel);
+        this.testResult = new TestResult();
+        this.testResult.setApplication(this.application);
+        this.testResult.setFeature(this.feature);
+        this.testResult.setFeatureName(this.featureName);
+        this.testResult.setReleaseVersion(this.releaseVersion);
+        this.testResult.setRisk(this.risk);
+        this.testResult.setRun(this.run);
+        this.testResult.setTestType(this.testType);
     }
 
-    public void setClassName(final String className) {
-        this.junitTestResult.setClassName(className);
+    public void setFeatureName(final String featureName) {
+        this.featureName = featureName;
+        this.testResult.setFeatureName(featureName);
     }
 
     public void setResultAndErrorMessage(final TestExecutionResult testExecutionResult) {
         final TestExecutionResult.Status status = testExecutionResult.getStatus();
-        this.junitTestResult.setResult(status.name());
+        this.testResult.setResult(status.name());
 
         String errorMessageStr = "NA";
         if (!TestExecutionResult.Status.SUCCESSFUL.equals(status)) {
@@ -113,14 +120,14 @@ public class TestDataProcessor {
             errorMessageStr = errorMessage.getMessage();
         }
 
-        this.junitTestResult.setErrorMessage(errorMessageStr);
+        this.testResult.setErrorMessage(errorMessageStr);
     }
 
     public void setTestCaseSkipped(final String reason) {
         testCasesSkipped.incrementAndGet();
-        this.junitTestResult.setResult(SKIPPED);
-        this.junitTestResult.setDurationMs(0);
-        this.junitTestResult.setSkippedMessage(reason);
+        this.testResult.setResult(SKIPPED);
+        this.testResult.setDurationMs(0);
+        this.testResult.setSkippedMessage(reason);
     }
 
     /**
@@ -131,11 +138,11 @@ public class TestDataProcessor {
         final String releaseVersionFromCi = System.getenv(ENV_RELEASE_VERSION);
 
         if (releaseVersionFromCi != null && !releaseVersionFromCi.isEmpty()) {
-            releaseVersion = releaseVersionFromCi;
+            this.releaseVersion = releaseVersionFromCi;
         }
 
-        this.junitTestResult.setReleaseVersion(releaseVersion);
-        this.junitTestRunResult.setReleaseVersion(releaseVersion);
+        this.testResult.setReleaseVersion(this.releaseVersion);
+        this.testRunResult.setReleaseVersion(this.releaseVersion);
     }
 
     public String getReleaseVersion() {
@@ -143,19 +150,19 @@ public class TestDataProcessor {
     }
 
     public void setTestCases(final Long testCases) {
-        this.junitTestRunResult.setTestCases(testCases);
+        this.testRunResult.setTestCasesTotal(testCases);
     }
 
     public void setTestCasesFailed() {
-        this.junitTestRunResult.setTestCasesFailed(testCasesFailed.intValue());
+        this.testRunResult.setTestCasesFailed(testCasesFailed.intValue());
     }
 
     public void setTestCasesSkipped() {
-        this.junitTestRunResult.setTestCasesSkipped(testCasesSkipped.intValue());
+        this.testRunResult.setTestCasesSkipped(testCasesSkipped.intValue());
     }
 
     public void setTestName(final String name) {
-        this.junitTestResult.setTestName(splitCamelCase(name));
+        this.testResult.setTestName(splitCamelCase(name));
     }
 
     /**
@@ -166,18 +173,17 @@ public class TestDataProcessor {
      * @param testSource of the project
      */
     public void setTestType(final String testSource) {
-        String testType;
         if (testSource.endsWith("Test")) {
-            testType = TYPE_UNIT;
+            this.testType = TYPE_UNIT;
         } else if (testSource.endsWith(TYPE_COMPONENT)) {
-            testType = TYPE_COMPONENT;
+            this.testType = TYPE_COMPONENT;
         } else if (testSource.endsWith(TYPE_INTEGRATION)) {
-            testType = TYPE_INTEGRATION;
+            this.testType = TYPE_INTEGRATION;
         } else
-            testType = "UNKNOWN_TEST_TYPE";
+            this.testType = "UNKNOWN_TEST_TYPE";
 
-        this.junitTestResult.setTestType(testType);
-        this.junitTestRunResult.setTestType(testType);
+        this.testResult.setTestType(this.testType);
+        this.testRunResult.setTestType(this.testType);
     }
 
     /**
@@ -197,22 +203,22 @@ public class TestDataProcessor {
                 case "HIGH":
                 case "MEDIUM":
                 case "LOW":
-                    riskLabel = tag;
+                    this.risk = tag;
                     break;
                 default:
-                    featureLabel = tag;
+                    this.feature = tag;
                     break;
                 }
             });
         }
 
-        this.junitTestResult.setFeatureLabel(featureLabel);
-        this.junitTestResult.setRiskLabel(riskLabel);
+        this.testResult.setFeature(this.feature);
+        this.testResult.setRisk(this.risk);
     }
 
     public void setTestRunResult() {
         final String result = testCasesFailed.intValue() > 0 ? NOK : OK;
-        junitTestRunResult.setResult(result);
+        testRunResult.setResult(result);
     }
 
     /**
@@ -229,14 +235,15 @@ public class TestDataProcessor {
     }
 
     public void startTimeTest() {
-        startTimeTest = startTimer();
-        this.junitTestResult.setTime(startTimeTest);
+        this.startTimeTest = startTimer();
+        this.testResult.setTime(this.startTimeTest);
     }
 
     public void startTimeTestRun() {
-        startTimeTestRun = startTimer();
-        this.junitTestRunResult.setRun(getFormatter().format(startTimeTestRun));
-        this.junitTestResult.setRun(getFormatter().format(startTimeTestRun));
+        this.startTimeTestRun = startTimer();
+        this.run = getFormatter().format(this.startTimeTestRun);
+        this.testRunResult.setRun(this.run);
+        this.testResult.setRun(this.run);
     }
 
     private Instant startTimer() {
@@ -244,12 +251,13 @@ public class TestDataProcessor {
     }
 
     public void setDurationTest() {
-        Long duration = Duration.between(startTimeTest, Instant.now()).toMillis();
-        this.junitTestResult.setDurationMs(duration);
+        final long duration = Duration.between
+                (startTimeTest, Instant.now()).toMillis();
+        this.testResult.setDurationMs(duration);
     }
 
     public void setDurationTestRun() {
-        Long duration = Duration.between(startTimeTestRun, Instant.now()).toMillis();
-        this.junitTestRunResult.setDurationMs(duration);
+        final long duration = Duration.between(this.startTimeTestRun, Instant.now()).toMillis();
+        this.testRunResult.setDurationMs(duration);
     }
 }

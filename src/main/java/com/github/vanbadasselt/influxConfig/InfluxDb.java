@@ -1,4 +1,4 @@
-package com.github.vanbadasselt.config;
+package com.github.vanbadasselt.influxConfig;
 
 import org.influxdb.BatchOptions;
 import org.influxdb.InfluxDB;
@@ -70,8 +70,9 @@ public final class InfluxDb {
      */
     private final String influxDatabaseName;
 
+
     /**
-     * Initializes connection with an influx database.
+     * Initializes connection with the specified influx database.
      */
     public InfluxDb() {
         final String influxHost = getEnvironmentVariable(ENV_INFLUX_HOST, "localhost");
@@ -95,7 +96,7 @@ public final class InfluxDb {
         influxDBConnection.setLogLevel(InfluxDB.LogLevel.BASIC);
         influxDBConnection.setDatabase(influxDatabaseName);
         influxDBConnection.createRetentionPolicy(
-                "defaultPolicy", influxDatabaseName, "60d", 1, true);
+                "defaultPolicy", influxDatabaseName, "30d", 1, true);
         influxDBConnection.enableBatch(BatchOptions.DEFAULTS);
     }
 
@@ -113,7 +114,7 @@ public final class InfluxDb {
      *
      * @return influx host url
      */
-    public String getHostUrl() {
+    public String getInfluxUrl() {
         return influxUrl;
     }
 
