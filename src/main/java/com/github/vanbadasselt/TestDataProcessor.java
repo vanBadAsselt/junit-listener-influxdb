@@ -182,8 +182,8 @@ public class TestDataProcessor {
         } else
             this.testType = "UNKNOWN_TEST_TYPE";
 
-        this.testResult.setTestType(testType);
-        this.testRunResult.setTestType(testType);
+        this.testResult.setTestType(this.testType);
+        this.testRunResult.setTestType(this.testType);
     }
 
     /**
