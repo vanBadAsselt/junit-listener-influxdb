@@ -1,4 +1,4 @@
-package com.github.vanbadasselt;
+package com.github.vanbadasselt.influxModels;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
@@ -8,27 +8,21 @@ import java.time.Instant;
 
 @SuppressFBWarnings("URF_UNREAD_FIELD")
 @SuppressWarnings("PMD.UnusedPrivateField")
-@Measurement(name = "junitTest")
-public class JunitTestResult {
+@Measurement(name = "testRunResults")
+public class TestRunResult {
 
     @TimeColumn
     @Column(name = "time")
     private Instant time;
 
-    @Column(name = "application")
+    @Column(name = "application", tag = true)
     private String application;
 
-    @Column(name = "featureLabel", tag = true)
-    private String featureLabel;
-
-    @Column(name = "className")
-    private String className;
+    @Column(name = "applicationType", tag = true)
+    private String applicationType;
 
     @Column(name = "durationMs")
     private long durationMs;
-
-    @Column(name = "errorMessage")
-    private String errorMessage;
 
     @Column(name = "releaseVersion", tag = true)
     private String releaseVersion;
@@ -39,60 +33,39 @@ public class JunitTestResult {
     @Column(name = "run", tag = true)
     private String run;
 
-    @Column(name = "riskLabel", tag = true)
-    private String riskLabel;
+    @Column(name = "testCasesFailed")
+    private long testCasesFailed;
 
-    @Column(name = "skippedMessage")
-    private String skippedMessage;
+    @Column(name = "testCasesSkipped")
+    private long testCasesSkipped;
 
-    @Column(name = "testName")
-    private String testName;
+    @Column(name = "testCasesTotal")
+    private long testCasesTotal;
 
     @Column(name = "testType", tag = true)
     private String testType;
 
     private static final String UNKNOWN = "UNK";
+    private static final String APPLICATION_TYPE_BACKEND = "BE";
 
-    public JunitTestResult(){
+    public TestRunResult(){
         this.application = UNKNOWN;
-        this.className = UNKNOWN;
-        this.testName = UNKNOWN;
+        this.applicationType = APPLICATION_TYPE_BACKEND;
         this.durationMs = 0;
-        this.skippedMessage = UNKNOWN;
-        this.errorMessage = UNKNOWN;
-        this.featureLabel = UNKNOWN;
         this.releaseVersion = UNKNOWN;
-        this.riskLabel = UNKNOWN;
-        this.testType = UNKNOWN;
+        this.result = UNKNOWN;
         this.run = UNKNOWN;
-    }
-
-    public void setTime(Instant time) {
-        this.time = time;
+        this.testCasesFailed = 0;
+        this.testCasesSkipped = 0;
+        this.testCasesTotal = 0;
     }
 
     public void setApplication(String application) {
         this.application = application;
     }
 
-    public void setFeatureLabel(String featureLabel) {
-        this.featureLabel = featureLabel;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
     public void setDurationMs(long durationMs) {
         this.durationMs = durationMs;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
-
-    public void setRiskLabel(String riskLabel) {
-        this.riskLabel = riskLabel;
     }
 
     public void setReleaseVersion(String releaseVersion) {
@@ -107,12 +80,16 @@ public class JunitTestResult {
         this.run = run;
     }
 
-    public void setSkippedMessage(String skippedMessage) {
-        this.skippedMessage = skippedMessage;
+    public void setTestCasesTotal(long testCasesTotal) {
+        this.testCasesTotal = testCasesTotal;
     }
 
-    public void setTestName(String testName) {
-        this.testName = testName;
+    public void setTestCasesFailed(long testCasesFailed) {
+        this.testCasesFailed = testCasesFailed;
+    }
+
+    public void setTestCasesSkipped(long testCasesSkipped) {
+        this.testCasesSkipped = testCasesSkipped;
     }
 
     public void setTestType(String testType) {

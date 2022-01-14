@@ -1,5 +1,6 @@
 package com.github.vanbadasselt;
 
+import com.github.vanbadasselt.influxConfig.InfluxDbSender;
 import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.launcher.TestExecutionListener;
 import org.junit.platform.launcher.TestIdentifier;
@@ -57,7 +58,7 @@ public class JUnitListenerInfluxDb implements TestExecutionListener {
                 // When a new test class begins
             } else if (testIdentifier.getParentId().isPresent()) {
                 final String className = testIdentifier.getDisplayName();
-                testDataProcessor.setClassName(className);
+                testDataProcessor.setFeatureName(className);
                 testDataProcessor.setTestType(className);
 
                 if (testDataProcessor.getApplication().equals(UNKNOWN)) {
@@ -81,17 +82,20 @@ public class JUnitListenerInfluxDb implements TestExecutionListener {
             testDataProcessor.setTestLabels(testIdentifier);
 
             // Set a data record with the results of 1 test
-            influxDbSender.setDataRecord(testDataProcessor.getJunitTestResult());
+            influxDbSender.savePoint(testDataProcessor.getTestResult());
             // Reset data of the test result that changes per test
             testDataProcessor.resetTestResult();
         }
     }
 
     /**
-     * Called when the execution of a leaf or subtree of the TestPlan has finished, regardless of the outcome.
+     * Called when the execution of a leaf or subtree of
+     * the TestPlan has finished, regardless of the outcome.
      *
-     * @param testIdentifier      - the identifier of the finished test or container
-     * @param testExecutionResult - the (unaggregated) result of the execution for the supplied TestIdentifier
+     * @param testIdentifier      - the identifier of the
+     *                            finished test/container
+     * @param testExecutionResult - the result of the execution
+     *                            for the supplied TestIdentifier
      */
     @Override
     public void executionFinished(final TestIdentifier testIdentifier,
@@ -103,7 +107,7 @@ public class JUnitListenerInfluxDb implements TestExecutionListener {
             testDataProcessor.setTestLabels(testIdentifier);
 
             // Set a data record with the results of 1 test
-            influxDbSender.setDataRecord(testDataProcessor.getJunitTestResult());
+            influxDbSender.savePoint(testDataProcessor.getTestResult());
             // Reset data of the test result that changes per test
             testDataProcessor.resetTestResult();
         }
@@ -127,8 +131,8 @@ public class JUnitListenerInfluxDb implements TestExecutionListener {
             }
 
             // Set a data record with the results of all tests
-            influxDbSender.setDataRecord(testDataProcessor.getJunitTestRunResult());
-            influxDbSender.sendDataRecords();
+            influxDbSender.savePoint(testDataProcessor.getTestRunResult());
+            influxDbSender.sendPoints();
             log.info("The test results are successfully written to the InfluxDB");
         }
     }
